@@ -7,7 +7,7 @@ module ietf-bgp-communities {
   import ietf-inet-types {
     prefix inet;
     reference
-      "draft-ietf-netmod-rfc6991-bis-17: Common YANG Data Types";
+      "draft-ietf-netmod-rfc6991-bis-18: Common YANG Data Types";
   }
 
   organization
