@@ -705,7 +705,7 @@ module ietf-bgp-communities {
           By default, communities are compared using the decimal representation of the fields. If "format" for a Local Administrator or Local Data Part is set to "binary", the fields in the received community are converted to strings of zeros and ones before comparison.
         </t>
         <t>
-          See <xref target="security.parsing"> for security considerations when parsing community definitions.
+          See <xref target="security.parsing"/> for security considerations when parsing community definitions.
         </t>
       </section>
 
