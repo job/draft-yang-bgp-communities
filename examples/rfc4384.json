@@ -14,13 +14,13 @@
           "field": [
             {
               "name": "Region",
-              "length": 5, 
+              "length": 5,
               "pattern": "00010",
               "description": "OC"
             },
             {
               "name": "Satellite",
-              "length": 1, 
+              "length": 1,
               "pattern": "0",
               "description": "*"
             },
@@ -46,18 +46,18 @@
           "field": [
             {
               "name": "Reserved",
-              "length": 16, 
+              "length": 16,
               "pattern": "0000000000000000"
             },
             {
               "name": "Region",
-              "length": 5, 
+              "length": 5,
               "pattern": "00010",
               "description": "OC"
             },
             {
               "name": "Satellite",
-              "length": 1, 
+              "length": 1,
               "pattern": "0",
               "description": "*"
             },
