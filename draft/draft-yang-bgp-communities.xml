@@ -208,7 +208,7 @@ module: ietf-bgp-communities
       </t>
       <sourcecode>
 <![CDATA[
-<CODE BEGINS> file "ietf-bgp-communities@2025-06-03.yang"
+<CODE BEGINS> file "ietf-bgp-communities@2025-06-13.yang"
 
 module ietf-bgp-communities {
   yang-version 1.1;
@@ -254,7 +254,7 @@ module ietf-bgp-communities {
 
   // RFC-EDITOR: please update YYYY with this RFC ID
 
-  revision 2025-06-03 {
+  revision 2025-06-13 {
     description
       "Initial revision.";
     reference
@@ -281,7 +281,7 @@ module ietf-bgp-communities {
   typedef community-name {
     type string {
       length "1..255";
-      pattern '[^ \t\r\n\p{C}]+';
+      pattern '[^\s]+';
     }
     description
       "This type restricts values for the name of a BGP community.";
@@ -313,7 +313,6 @@ module ietf-bgp-communities {
   typedef community-description {
     type string {
       length "1..65535";
-      pattern '[^\p{C}]+';
     }
     description
       "This type restricts values for the description of a BGP
@@ -347,7 +346,7 @@ module ietf-bgp-communities {
   typedef field-name {
     type string {
       length "1..255";
-      pattern '[^ \t\r\n\p{C}]+';
+      pattern '[^\s]+';
     }
     description
       "This type restricts values for the name leaf of a BGP
@@ -375,11 +374,13 @@ module ietf-bgp-communities {
   typedef field-description {
     type string {
       length "1..65535";
-      pattern '[^\p{C}]+';
+      pattern '(\*)|([^*]+)';
     }
     description
       "This type restricts values for the description leaf of a BGP
-       community Local Administrator/Local Data field.";
+       community Local Administrator/Local Data field.  The string
+       containing a single asterisk '*' indicates that the value of
+       the field should be used as description.";
     reference
       "RFC YYYY: A YANG Data Model for BGP Communities
        RFC-EDITOR: please update YYYY with this RFC ID";
@@ -455,7 +456,6 @@ module ietf-bgp-communities {
     leaf description {
       type string {
         length "1..65535";
-        pattern '[^\p{C}]+';
       }
       description
         "A description for the community set";
@@ -478,7 +478,6 @@ module ietf-bgp-communities {
       leaf name {
         type string {
           length "1..255";
-          pattern '[^\p{C}]+';
         }
         description
           "Maintainer contact name";
@@ -486,7 +485,6 @@ module ietf-bgp-communities {
       leaf role {
         type string {
           length "1..255";
-          pattern '[^\p{C}]+';
         }
         description
           "Maintainer contact role";
@@ -494,7 +492,6 @@ module ietf-bgp-communities {
       leaf organization {
         type string {
           length "1..255";
-          pattern '[^\p{C}]+';
         }
         description
           "Maintainer contact organization";
@@ -502,7 +499,6 @@ module ietf-bgp-communities {
       leaf organizational-unit {
         type string {
           length "1..255";
-          pattern '[^\p{C}]+';
         }
         description
           "Maintainer contact organizational unit";
@@ -797,12 +793,12 @@ RFC-EDITOR: please update YYYY with this RFC ID
             <tr>
               <td>197000</td>
               <td><eref target="https://www-static.ripe.net/dynamic/draft-ietf-grow-yang-bgp-communities/as197000.json">as197000.json</eref></td>
-              <td>2024-06-15</td>
+              <td>2025-06-13</td>
             </tr>
             <tr>
               <td>25152</td>
               <td><eref target="https://www-static.ripe.net/dynamic/draft-ietf-grow-yang-bgp-communities/as25152.json">as25152.json</eref></td>
-              <td>2024-06-15</td>
+              <td>2025-06-13</td>
             </tr>
           </tbody>
         </table>
@@ -826,7 +822,7 @@ RFC-EDITOR: please update YYYY with this RFC ID
           <tbody>
             <tr>
               <td><eref target="https://github.com/NLNOG/lg.ring.nlnog.net/">NLNOG Looking Glass</eref></td>
-              <td>2024-06-15</td>
+              <td>2025-06-13</td>
             </tr>
           </tbody>
         </table>
@@ -977,7 +973,8 @@ NO_EXPORT",
           "field": [
             {
               "name": "ASN",
-              "pattern": ".*"
+              "pattern": ".*",
+              "description": "*"
             }
           ]
         }
@@ -1019,7 +1016,8 @@ from the Fiji Islands",
             {
               "name": "Satellite",
               "length": 1,
-              "pattern": "0"
+              "pattern": "0",
+              "description": "*"
             },
             {
               "name": "Country",
@@ -1045,8 +1043,7 @@ from the Fiji Islands",
             {
               "name": "Reserved",
               "length": 16,
-              "pattern": "0000000000000000",
-              "description": "0"
+              "pattern": "0000000000000000"
             },
             {
               "name": "Region",
@@ -1057,7 +1054,8 @@ from the Fiji Islands",
             {
               "name": "Satellite",
               "length": 1,
-              "pattern": "0"
+              "pattern": "0",
+              "description": "*"
             },
             {
               "name": "Country",
