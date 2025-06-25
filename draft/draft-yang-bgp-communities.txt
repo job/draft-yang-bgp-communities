@@ -4,8 +4,8 @@
 
 Network Working Group                                            M. Pels
 Internet-Draft                                                  RIPE NCC
-Intended status: Standards Track                             6 June 2025
-Expires: 8 December 2025
+Intended status: Standards Track                            25 June 2025
+Expires: 27 December 2025
 
 
                  A YANG Data Model for BGP Communities
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 December 2025.
+   This Internet-Draft will expire on 27 December 2025.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Pels                     Expires 8 December 2025                [Page 1]
+Pels                    Expires 27 December 2025                [Page 1]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -77,7 +77,7 @@ Table of Contents
      8.2.  Parser implementations  . . . . . . . . . . . . . . . . .  17
    9.  Security considerations . . . . . . . . . . . . . . . . . . .  18
      9.1.  Publishing considerations . . . . . . . . . . . . . . . .  18
-     9.2.  Parsing considerations  . . . . . . . . . . . . . . . . .  19
+     9.2.  Parsing considerations  . . . . . . . . . . . . . . . . .  18
    10. Normative References  . . . . . . . . . . . . . . . . . . . .  19
    11. Informative References  . . . . . . . . . . . . . . . . . . .  20
    Appendix A.  JSON Examples  . . . . . . . . . . . . . . . . . . .  22
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Pels                     Expires 8 December 2025                [Page 2]
+Pels                    Expires 27 December 2025                [Page 2]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -165,7 +165,7 @@ Internet-Draft             BGP Community YANG                  June 2025
 
 
 
-Pels                     Expires 8 December 2025                [Page 3]
+Pels                    Expires 27 December 2025                [Page 3]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -221,7 +221,7 @@ Internet-Draft             BGP Community YANG                  June 2025
 
 
 
-Pels                     Expires 8 December 2025                [Page 4]
+Pels                    Expires 27 December 2025                [Page 4]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -249,7 +249,7 @@ Internet-Draft             BGP Community YANG                  June 2025
    [I-D.ietf-netmod-rfc6991-bis].  These data types are represented with
    the prefix "inet".
 
-   <CODE BEGINS> file "ietf-bgp-communities@2025-06-03.yang"
+   <CODE BEGINS> file "ietf-bgp-communities@2025-06-13.yang"
 
    module ietf-bgp-communities {
      yang-version 1.1;
@@ -277,7 +277,7 @@ Internet-Draft             BGP Community YANG                  June 2025
 
 
 
-Pels                     Expires 8 December 2025                [Page 5]
+Pels                    Expires 27 December 2025                [Page 5]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -303,7 +303,7 @@ Internet-Draft             BGP Community YANG                  June 2025
 
      // RFC-EDITOR: please update YYYY with this RFC ID
 
-     revision 2025-06-03 {
+     revision 2025-06-13 {
        description
          "Initial revision.";
        reference
@@ -333,12 +333,12 @@ Internet-Draft             BGP Community YANG                  June 2025
 
 
 
-Pels                     Expires 8 December 2025                [Page 6]
+Pels                    Expires 27 December 2025                [Page 6]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
 
-         pattern '[^ \t\r\n\p{C}]+';
+         pattern '[^\s]+';
        }
        description
          "This type restricts values for the name of a BGP community.";
@@ -370,7 +370,6 @@ Internet-Draft             BGP Community YANG                  June 2025
      typedef community-description {
        type string {
          length "1..65535";
-         pattern '[^\p{C}]+';
        }
        description
          "This type restricts values for the description of a BGP
@@ -386,15 +385,15 @@ Internet-Draft             BGP Community YANG                  June 2025
            value 0;
            description
              "Decimal number string";
+         }
 
 
 
-Pels                     Expires 8 December 2025                [Page 7]
+Pels                    Expires 27 December 2025                [Page 7]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
 
-         }
          enum binary {
            value 1;
            description
@@ -412,7 +411,7 @@ Internet-Draft             BGP Community YANG                  June 2025
      typedef field-name {
        type string {
          length "1..255";
-         pattern '[^ \t\r\n\p{C}]+';
+         pattern '[^\s]+';
        }
        description
          "This type restricts values for the name leaf of a BGP
@@ -440,19 +439,21 @@ Internet-Draft             BGP Community YANG                  June 2025
      typedef field-description {
        type string {
          length "1..65535";
-         pattern '[^\p{C}]+';
+         pattern '(\*)|([^*]+)';
        }
+       description
 
 
 
-Pels                     Expires 8 December 2025                [Page 8]
+Pels                    Expires 27 December 2025                [Page 8]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
 
-       description
          "This type restricts values for the description leaf of a BGP
-          community Local Administrator/Local Data field.";
+          community Local Administrator/Local Data field.  The string
+          containing a single asterisk '*' indicates that the value of
+          the field should be used as description.";
        reference
          "RFC YYYY: A YANG Data Model for BGP Communities
           RFC-EDITOR: please update YYYY with this RFC ID";
@@ -497,15 +498,15 @@ Internet-Draft             BGP Community YANG                  June 2025
          leaf description {
            type field-description;
            description
-             "A text description of the field pattern.  This description
 
 
 
-Pels                     Expires 8 December 2025                [Page 9]
+Pels                    Expires 27 December 2025                [Page 9]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
 
+             "A text description of the field pattern.  This description
               can be used to provide meaning to specific values for a
               field.";
          }
@@ -536,7 +537,6 @@ Internet-Draft             BGP Community YANG                  June 2025
        leaf description {
          type string {
            length "1..65535";
-           pattern '[^\p{C}]+';
          }
          description
            "A description for the community set";
@@ -557,7 +557,7 @@ Internet-Draft             BGP Community YANG                  June 2025
 
 
 
-Pels                     Expires 8 December 2025               [Page 10]
+Pels                    Expires 27 December 2025               [Page 10]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -567,7 +567,6 @@ Internet-Draft             BGP Community YANG                  June 2025
          leaf name {
            type string {
              length "1..255";
-             pattern '[^\p{C}]+';
            }
            description
              "Maintainer contact name";
@@ -575,7 +574,6 @@ Internet-Draft             BGP Community YANG                  June 2025
          leaf role {
            type string {
              length "1..255";
-             pattern '[^\p{C}]+';
            }
            description
              "Maintainer contact role";
@@ -583,7 +581,6 @@ Internet-Draft             BGP Community YANG                  June 2025
          leaf organization {
            type string {
              length "1..255";
-             pattern '[^\p{C}]+';
            }
            description
              "Maintainer contact organization";
@@ -591,7 +588,6 @@ Internet-Draft             BGP Community YANG                  June 2025
          leaf organizational-unit {
            type string {
              length "1..255";
-             pattern '[^\p{C}]+';
            }
            description
              "Maintainer contact organizational unit";
@@ -610,18 +606,18 @@ Internet-Draft             BGP Community YANG                  June 2025
          leaf category {
            type community-category;
            description
-
-
-
-Pels                     Expires 8 December 2025               [Page 11]
-
-Internet-Draft             BGP Community YANG                  June 2025
-
-
              "Category of the community";
          }
          leaf description {
            type community-description;
+
+
+
+Pels                    Expires 27 December 2025               [Page 11]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
+
            description
              "Description for the community";
          }
@@ -666,18 +662,18 @@ Internet-Draft             BGP Community YANG                  June 2025
            type community-description;
            description
              "Description for the community";
-
-
-
-Pels                     Expires 8 December 2025               [Page 12]
-
-Internet-Draft             BGP Community YANG                  June 2025
-
-
          }
          leaf type {
            type uint8;
            mandatory true;
+
+
+
+Pels                    Expires 27 December 2025               [Page 12]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
+
            description
              "High-order Type of the community.  Supported values are 0
               (0x00) for Transitive Two-Octet AS-Specific Extended
@@ -722,18 +718,18 @@ Internet-Draft             BGP Community YANG                  June 2025
              default "decimal";
              description
                "Format used for parsing Local Administrator subfields";
-
-
-
-Pels                     Expires 8 December 2025               [Page 13]
-
-Internet-Draft             BGP Community YANG                  June 2025
-
-
            }
            uses local-admin-fields;
          }
          reference
+
+
+
+Pels                    Expires 27 December 2025               [Page 13]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
+
            "RFC 4360: BGP Extended Communities Attribute";
        }
        list large {
@@ -778,18 +774,18 @@ Internet-Draft             BGP Community YANG                  June 2025
            description
              "Local Data Part 2 Field";
            leaf format {
-
-
-
-Pels                     Expires 8 December 2025               [Page 14]
-
-Internet-Draft             BGP Community YANG                  June 2025
-
-
              type local-admin-format;
              default "decimal";
              description
                "Format used for parsing Local Data Part 2 subfields";
+
+
+
+Pels                    Expires 27 December 2025               [Page 14]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
+
            }
            uses local-admin-fields;
          }
@@ -834,23 +830,17 @@ Internet-Draft             BGP Community YANG                  June 2025
    Part is set to "binary", the fields in the received community are
    converted to strings of zeros and ones before comparison.
 
+   See Section 9.2 for security considerations when parsing community
+   definitions.
 
 
 
-Pels                     Expires 8 December 2025               [Page 15]
+
+
+Pels                    Expires 27 December 2025               [Page 15]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
-
-   Applications that parse these community definitions SHOULD reject
-   objects that do not comply with the rules described in this document.
-   Furthermore, parsers SHOULD check that the sum of the specified Local
-   Administrator or Local Data Part field lengths in each community
-   definition does not exceed the local part size of the specified
-   community type.  For example, a Regular BGP community definition with
-   format "decimal" containing a field of length 4 and a field of length
-   2 would be illegal, as the Local Administrator field has a maximum
-   length of 65535 (5 digits).
 
 7.  IANA considerations
 
@@ -891,13 +881,6 @@ Internet-Draft             BGP Community YANG                  June 2025
    RFC-EDITOR: Please remove this section and the accompanying
    reference(s) before publication.
 
-
-
-Pels                     Expires 8 December 2025               [Page 16]
-
-Internet-Draft             BGP Community YANG                  June 2025
-
-
    This section records the status of known implementations of the
    protocol defined by this specification at the time of posting of this
    Internet-Draft, and is based on a proposal described in [RFC7942].
@@ -907,6 +890,14 @@ Internet-Draft             BGP Community YANG                  June 2025
    here does not imply endorsement by the IETF.  Furthermore, no effort
    has been spent to verify the information presented here that was
    supplied by IETF contributors.  This is not intended as, and must not
+
+
+
+Pels                    Expires 27 December 2025               [Page 16]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
+
    be construed to be, a catalog of available implementations or their
    features.  Readers are advised to note that other implementations may
    exist.
@@ -927,11 +918,11 @@ Internet-Draft             BGP Community YANG                  June 2025
     | ASN    | Publication URI                          | YANG model |
     |        |                                          | revision   |
     +========+==========================================+============+
-    | 197000 | as197000.json (https://www-              | 2024-06-15 |
+    | 197000 | as197000.json (https://www-              | 2025-06-13 |
     |        | static.ripe.net/dynamic/draft-ietf-grow- |            |
     |        | yang-bgp-communities/as197000.json)      |            |
     +--------+------------------------------------------+------------+
-    | 25152  | as25152.json (https://www-               | 2024-06-15 |
+    | 25152  | as25152.json (https://www-               | 2025-06-13 |
     |        | static.ripe.net/dynamic/draft-ietf-grow- |            |
     |        | yang-bgp-communities/as25152.json)       |            |
     +--------+------------------------------------------+------------+
@@ -942,27 +933,26 @@ Internet-Draft             BGP Community YANG                  June 2025
 
    The following known parser implementations exist.
 
-
-
-
-
-
-
-
-Pels                     Expires 8 December 2025               [Page 17]
-
-Internet-Draft             BGP Community YANG                  June 2025
-
-
       +===============================================+============+
       | Name                                          | YANG model |
       |                                               | revision   |
       +===============================================+============+
-      | NLNOG Looking Glass                           | 2024-06-15 |
+      | NLNOG Looking Glass                           | 2025-06-13 |
       | (https://github.com/NLNOG/lg.ring.nlnog.net/) |            |
       +-----------------------------------------------+------------+
 
                      Table 2: Parser implementations
+
+
+
+
+
+
+
+Pels                    Expires 27 December 2025               [Page 17]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
 
 9.  Security considerations
 
@@ -1001,30 +991,37 @@ Internet-Draft             BGP Community YANG                  June 2025
    elements may be set with information that refers to generic contact
    information, not pointing to specific individuals.
 
+9.2.  Parsing considerations
+
+   The YANG module described in this document may be used to specify BGP
+   community definitions in different serialization formats, such as
+   XML, JSON or CBOR.  Applications that parse these community
+   definitions SHOULD reject objects that do not conform to the YANG
+   model.  Furthermore, parsers SHOULD check that the sum of the
+   specified Local Administrator or Local Data Part field lengths in
+   each community definition does not exceed the local part size of the
+   specified community type.  For example, a Regular BGP community
+   definition with format "decimal" containing a field of length 4 and a
 
 
 
-
-Pels                     Expires 8 December 2025               [Page 18]
+Pels                    Expires 27 December 2025               [Page 18]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
 
-9.2.  Parsing considerations
-
-   The YANG module described in this document may be used to specify BGP
-   community definitions in different encoding formats, such as XML,
-   JSON or CBOR.  Applications that parse these community definitions
-   SHOULD reject objects that do not comply with the rules described in
-   this document.  Furthermore, parsers SHOULD check that the sum of the
-   specified Local Administrator or Local Data Part field lengths in
-   each community definition does not exceed the local part size of the
-   specified community type.
+   field of length 2 would be illegal, as the Local Administrator field
+   has a maximum length of 65535 (5 digits).
 
    The "bgp-communities/contact-url" element may contain a link to an
    untrusted webpage.  Parsers MAY opt to render the URL as plain text
    rather than a clickable link, to prevent inadvertent exposure of
    information by users of the rendered output.
+
+   Several elements with the "string" data type may be used to display
+   information in a web page or application.  Parsers should take care
+   that the appropriate escaping is performed to protect against cross-
+   site scripting attacks.
 
 10.  Normative References
 
@@ -1057,19 +1054,17 @@ Internet-Draft             BGP Community YANG                  June 2025
               RFC 8092, DOI 10.17487/RFC8092, February 2017,
               <https://www.rfc-editor.org/info/rfc8092>.
 
-
-
-
-
-Pels                     Expires 8 December 2025               [Page 19]
-
-Internet-Draft             BGP Community YANG                  June 2025
-
-
    [RFC9595]  Veillette, M., Ed., Pelov, A., Ed., Petrov, I., Ed.,
               Bormann, C., and M. Richardson, "YANG Schema Item
               iDentifier (YANG SID)", RFC 9595, DOI 10.17487/RFC9595,
               July 2024, <https://www.rfc-editor.org/info/rfc9595>.
+
+
+
+Pels                    Expires 27 December 2025               [Page 19]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
 
 11.  Informative References
 
@@ -1114,18 +1109,18 @@ Internet-Draft             BGP Community YANG                  June 2025
               DOI 10.17487/RFC6020, October 2010,
               <https://www.rfc-editor.org/info/rfc6020>.
 
-
-
-
-Pels                     Expires 8 December 2025               [Page 20]
-
-Internet-Draft             BGP Community YANG                  June 2025
-
-
    [RFC6241]  Enns, R., Ed., Bjorklund, M., Ed., Schoenwaelder, J., Ed.,
               and A. Bierman, Ed., "Network Configuration Protocol
               (NETCONF)", RFC 6241, DOI 10.17487/RFC6241, June 2011,
               <https://www.rfc-editor.org/info/rfc6241>.
+
+
+
+
+Pels                    Expires 27 December 2025               [Page 20]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
 
    [RFC7942]  Sheffer, Y. and A. Farrel, "Improving Awareness of Running
               Code: The Implementation Status Section", BCP 205,
@@ -1173,7 +1168,12 @@ Internet-Draft             BGP Community YANG                  June 2025
 
 
 
-Pels                     Expires 8 December 2025               [Page 21]
+
+
+
+
+
+Pels                    Expires 27 December 2025               [Page 21]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -1229,7 +1229,7 @@ A.1.  RFC8195 Selective NO_EXPORT definition
 
 
 
-Pels                     Expires 8 December 2025               [Page 22]
+Pels                    Expires 27 December 2025               [Page 22]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -1270,7 +1270,8 @@ Internet-Draft             BGP Community YANG                  June 2025
              "field": [
                {
                  "name": "ASN",
-                 "pattern": ".*"
+                 "pattern": ".*",
+                 "description": "*"
                }
              ]
            }
@@ -1284,8 +1285,7 @@ Internet-Draft             BGP Community YANG                  June 2025
 
 
 
-
-Pels                     Expires 8 December 2025               [Page 23]
+Pels                    Expires 27 December 2025               [Page 23]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
@@ -1321,7 +1321,8 @@ A.2.  RFC4384 Data Collection definition
                {
                  "name": "Satellite",
                  "length": 1,
-                 "pattern": "0"
+                 "pattern": "0",
+                 "description": "*"
                },
                {
                  "name": "Country",
@@ -1337,15 +1338,15 @@ A.2.  RFC4384 Data Collection definition
          {
            "name": "RFC4384-EXTENDED-ORIGIN-OC/FJ",
            "description": "A national route over a terrestrial link \
-   from the Fiji Islands",
 
 
 
-Pels                     Expires 8 December 2025               [Page 24]
+Pels                    Expires 27 December 2025               [Page 24]
 
 Internet-Draft             BGP Community YANG                  June 2025
 
 
+   from the Fiji Islands",
            "type": 0,
            "subtype": 8,
            "asn": 10876,
@@ -1355,8 +1356,7 @@ Internet-Draft             BGP Community YANG                  June 2025
                {
                  "name": "Reserved",
                  "length": 16,
-                 "pattern": "0000000000000000",
-                 "description": "0"
+                 "pattern": "0000000000000000"
                },
                {
                  "name": "Region",
@@ -1367,7 +1367,8 @@ Internet-Draft             BGP Community YANG                  June 2025
                {
                  "name": "Satellite",
                  "length": 1,
-                 "pattern": "0"
+                 "pattern": "0",
+                 "description": "*"
                },
                {
                  "name": "Country",
@@ -1393,8 +1394,63 @@ Author's Address
    Martin Pels
    RIPE NCC
    Netherlands
+
+
+
+Pels                    Expires 27 December 2025               [Page 25]
+
+Internet-Draft             BGP Community YANG                  June 2025
+
+
    Email: mpels@ripe.net
 
 
 
-Pels                     Expires 8 December 2025               [Page 25]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pels                    Expires 27 December 2025               [Page 26]
