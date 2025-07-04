@@ -13,9 +13,12 @@ This repository contains the following files:
 * `draft/draft-yang-bgp-communities.html` - The draft in html format, generated using [xml2rfc](https://pypi.org/project/xml2rfc/)
 * `yang/draft-ietf-grow-yang-bgp-communities.yang` - The YANG model, verified using [yanglint](https://pypi.org/project/libyang/)
 * `scripts/parser.py` - An example parser
+* `scripts/convertcbor.py` - A tool for converting from JSON to CBOR and vice versa
 * `examples/bgp-communities.json` - An example JSON specification conforming to the YANG model
-* `examples/bgp-communities.txt` - Example communities to match using the JSON specification
-* `examples/bgp-communities.out` - Example output of the parser
+* `examples/rfc4384.json` - Example JSON specification for [RFC4384](https://www.rfc-editor.org/info/rfc4384) communities used in the draft
+* `examples/rfc8195.json` - Example JSON specification for [RFC8195](https://www.rfc-editor.org/info/rfc8195) community used in the draft
+* `examples/*.txt` - Example communities to match using the JSON specification
+* `examples/*.out` - Example output of the parser
 * `resources/inventory.md` - A non-exhaustive list of BGP community definitions found on the web
 
 ## Usage
@@ -28,27 +31,29 @@ xml2rfc --v3 --text --html draft/draft-yang-bgp-communities.xml
 Display the YANG module tree:
 ```
 wget https://www.yangcatalog.org/all_modules/ietf-inet-types@2024-10-21.yang -O yang/ietf-inet-types@2024-10-21.yang
-yanglint -p yang -f tree yang/ietf-bgp-communities@2025-03-13.yang
+yanglint -p yang -f tree yang/ietf-bgp-communities.yang
 ```
 
 Validate the YANG module:
 ```
-pyang --verbose --ietf -p yang yang/ietf-bgp-communities@2025-03-13.yang
+pyang --verbose --ietf -p yang yang/ietf-bgp-communities.yang
 ```
 
 Validate the JSON specification using the YANG model:
 ```
-yanglint -p yang yang/ietf-bgp-communities@2025-03-13.yang examples/bgp-communities.json
+yanglint -p yang yang/ietf-bgp-communities.yang examples/bgp-communities.json
 ```
 
 Generate a SID file from the YANG model (using Experimental/Private SIDs):
 ```
-cat yang/ietf-bgp-communities@2025-03-13.yang | pyang -p yang --sid-generate-file 60000:100
+cat yang/ietf-bgp-communities.yang | pyang -p yang --sid-generate-file 60000:100
 ```
 
-Parse the example communities using the example JSON specification:
+Parse the example communities using example JSON specifications:
 ```
 scripts/parser.py examples/bgp-communities.txt examples/bgp-communities.json
+scripts/parser.py examples/rfc8195.txt examples/rfc8195.json
+scripts/parser.py examples/rfc4384.txt examples/rfc4384.json
 ```
 
 Convert the example JSON specification to a CBOR file:
