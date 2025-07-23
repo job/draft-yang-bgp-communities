@@ -39,7 +39,7 @@
 
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
      category="std"
-     docName="draft-ietf-grow-yang-bgp-communities-05"
+     docName="draft-ietf-grow-yang-bgp-communities-06"
      ipr="trust200902"
      xml:lang="en"
      submissionType="IETF"
@@ -49,7 +49,7 @@
 
     <title abbrev="BGP Community YANG">A YANG Data Model for BGP Communities</title>
 
-    <seriesInfo name="Internet-Draft" value="draft-ietf-grow-yang-bgp-communities-05"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-grow-yang-bgp-communities-06"/>
 
     <author fullname="Martin Pels" initials="M" surname="Pels">
       <organization>RIPE NCC</organization>
@@ -208,7 +208,7 @@ module: ietf-bgp-communities
       </t>
       <sourcecode>
 <![CDATA[
-<CODE BEGINS> file "ietf-bgp-communities@2025-06-13.yang"
+<CODE BEGINS> file "ietf-bgp-communities@2025-07-04.yang"
 
 module ietf-bgp-communities {
   yang-version 1.1;
@@ -254,7 +254,7 @@ module ietf-bgp-communities {
 
   // RFC-EDITOR: please update YYYY with this RFC ID
 
-  revision 2025-06-13 {
+  revision 2025-07-04 {
     description
       "Initial revision.";
     reference
@@ -567,7 +567,9 @@ module ietf-bgp-communities {
           "Description for the community";
       }
       leaf type {
-        type uint8;
+        type uint8 {
+          range "0|2|64|66";
+        }
         mandatory true;
         description
           "High-order Type of the community.  Supported values are 0
@@ -793,12 +795,12 @@ RFC-EDITOR: please update YYYY with this RFC ID
             <tr>
               <td>197000</td>
               <td><eref target="https://www-static.ripe.net/dynamic/draft-ietf-grow-yang-bgp-communities/as197000.json">as197000.json</eref></td>
-              <td>2025-06-13</td>
+              <td>2025-07-04</td>
             </tr>
             <tr>
               <td>25152</td>
               <td><eref target="https://www-static.ripe.net/dynamic/draft-ietf-grow-yang-bgp-communities/as25152.json">as25152.json</eref></td>
-              <td>2025-06-13</td>
+              <td>2025-07-04</td>
             </tr>
           </tbody>
         </table>
@@ -822,7 +824,7 @@ RFC-EDITOR: please update YYYY with this RFC ID
           <tbody>
             <tr>
               <td><eref target="https://github.com/NLNOG/lg.ring.nlnog.net/">NLNOG Looking Glass</eref></td>
-              <td>2025-06-13</td>
+              <td>2025-07-04</td>
             </tr>
           </tbody>
         </table>
