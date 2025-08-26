@@ -30,18 +30,17 @@ xml2rfc --v3 --text --html draft/draft-yang-bgp-communities.xml
 
 Display the YANG module tree:
 ```
-wget https://www.yangcatalog.org/all_modules/ietf-inet-types@2024-10-21.yang -O yang/ietf-inet-types@2024-10-21.yang
-yanglint -p yang -f tree yang/ietf-bgp-communities.yang
-```
-
-Validate the YANG module:
-```
-pyang --verbose --ietf -p yang yang/ietf-bgp-communities.yang
+git clone https://github.com/YangModels/yang.git YangModels
+ln -s YangModels/experimental/ietf-extracted-YANG-modules ietf-yang
+pyang --verbose --ietf -p ietf-yang:yang -f tree  yang/ietf-bgp-communities.yang
+pyang --verbose --ietf -p ietf-yang:yang -f tree  yang/ietf-bgp-communities-annotate.yang
+pyang --verbose --ietf -p ietf-yang:yang -f tree --tree-print-groupings ietf-yang/ietf-bgp@2024-10-21.yang yang/ietf-bgp-communities-annotate.yang
 ```
 
 Validate the JSON specification using the YANG model:
 ```
-yanglint -p yang yang/ietf-bgp-communities.yang examples/bgp-communities.json
+yanglint -p ietf-yang yang/ietf-bgp-communities.yang examples/bgp-communities.json
+yanglint -p ietf-yang yang/ietf-bgp-communities-annotate.yang examples/ietf-bgp.json
 ```
 
 Generate a SID file from the YANG model (using Experimental/Private SIDs):

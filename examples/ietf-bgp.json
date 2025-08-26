@@ -1,0 +1,47 @@
+{
+  "ietf-routing:routing-state": {
+    "ribs": {
+      "rib": [
+        {
+          "name": "default",
+          "address-family": "ipv4"
+        }
+      ]
+    }
+  },
+  "ietf-routing:routing": {
+    "control-plane-protocols": {
+      "control-plane-protocol": [
+        {
+          "type": "ietf-bgp:bgp",
+          "name": "default",
+          "ietf-bgp:bgp": {
+            "rib": {
+              "communities": {
+                "community": [
+                  {
+                    "index": "1",
+                    "ietf-bgp-communities-annotate:annotation": {
+                      "name": "NO-ANNOUNCE",
+                      "description": "Example Regular: Do not announce to peers",
+                      "global-admin": 65001,
+                      "local-admin": {
+                        "field": [
+                          {
+                            "name": "Action",
+                            "pattern": "3000",
+                            "description": "No announce to peers"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
