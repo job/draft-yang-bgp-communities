@@ -433,7 +433,9 @@ module ietf-bgp-communities {
       "A community set";
     leaf serial {
       type uint32;
-      must "boolean(.)";
+      must ". > 0" {
+        error-message "serial must not be 0";
+      }
       description
         "Version number of the community set.  This value wraps and
          should be compared using sequence space arithmetic.
