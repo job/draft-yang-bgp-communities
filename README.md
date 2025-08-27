@@ -57,6 +57,9 @@ scripts/parser.py examples/rfc4384.txt examples/rfc4384.json
 
 Convert the example JSON specification to a CBOR file:
 ```
+python3 -m venv scripts
+scripts/bin/pip install cbor2
+PATH=scripts/bin:$PATH
 scripts/convertcbor.py --j2c -j examples/bgp-communities.json -c examples/bgp-communities.cbor
 scripts/convertcbor.py --j2c -j examples/bgp-communities.json -s *.sid -c examples/bgp-communities-sids.cbor
 ```
@@ -64,6 +67,18 @@ scripts/convertcbor.py --j2c -j examples/bgp-communities.json -s *.sid -c exampl
 Convert a CBOR file to JSON:
 ```
 scripts/convertcbor.py --c2j -c <in.cbor> [-s *.sid] -j <out.json>
+```
+
+Sign a JSON file:
+```
+scripts/bin/pip install jwcrypto rfc8785
+openssl ecparam -genkey -name secp521r1 -noout -out jws.key
+openssl ec -in jws.key -pubout -out jws.pub
+scripts/jwstool.py -s -k jws.key examples/bgp-communities.json
+
+Validate the signed JSON:
+````
+scripts/jwstool.py -v -k jws.pub examples/bgp-communities.json
 ```
 
 ## Implementations

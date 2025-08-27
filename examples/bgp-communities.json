@@ -1,5 +1,6 @@
 {
   "ietf-bgp-communities:bgp-communities": {
+    "autonomous-system-id": 65001,
     "description": "BGP Communities for Example.net",
     "contact": [
       {

@@ -342,7 +342,10 @@ module ietf-bgp-communities {
       case asn {
         leaf asn {
           type two-octet-as-number;
-          must "../type = 0 or ../type = 64";
+          must "../type = 0 or ../type = 64" {
+            error-message
+              "../type must match Two-Octet AS-Specific Community";
+          }
           description
             "Two-Octet AS";
         }
@@ -350,7 +353,10 @@ module ietf-bgp-communities {
       case asn4 {
         leaf asn4 {
           type inet:as-number;
-          must "../type = 2 or ../type = 66";
+          must "../type = 2 or ../type = 66" {
+            error-message
+              "../type must match Four-Octet AS-Specific Community";
+          }
           description
             "Four-Octet AS";
         }
@@ -437,6 +443,11 @@ module ietf-bgp-communities {
       reference
         "RFC 1912: Common DNS Operational and Configuration Errors";
     }
+    leaf autonomous-system-id {
+      type inet:as-number;
+      description
+        "Autonomous System authoritative for the community set";
+    }
     leaf uri {
       type inet:uri;
       description
@@ -467,6 +478,12 @@ module ietf-bgp-communities {
       description
         "A list of objects describing RFC 1997 BGP Communities";
       uses regular-community;
+      must
+        "(./global-admin = ../autonomous-system-id) or
+         (./global-admin >= 64512 and ./global-admin <= 65534)" {
+        error-message
+          "global-admin must be private ASN or match autonomous-system-id";
+        }
     }
     list extended {
       key "name";
@@ -476,6 +493,14 @@ module ietf-bgp-communities {
          Communities.  Two-Octet and Four-Octet AS Specific
          communities are supported by this model.";
       uses extended-community;
+      must
+        "(./asn = ../autonomous-system-id) or
+         (./asn4 = ../autonomous-system-id) or
+         (./asn >= 64512 and ./asn <= 65534) or
+         (./asn4 >= 4200000000 and ./asn4 <= 4294967294)" {
+        error-message
+          "global-admin must be private ASN or match autonomous-system-id";
+        }
     }
     list large {
       key "name";
@@ -484,6 +509,13 @@ module ietf-bgp-communities {
         "A list of objects describing RFC 8092 Large BGP
          Communities";
       uses large-community;
+      must
+        "(./global-admin = ../autonomous-system-id) or
+         (./global-admin >= 64512 and ./global-admin <= 65534) or
+         (./global-admin >= 4200000000 and ./global-admin <= 4294967294)" {
+        error-message
+          "global-admin must be private ASN or match autonomous-system-id";
+        }
     }
   }
 }
