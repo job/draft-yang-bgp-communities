@@ -794,12 +794,12 @@ RFC-EDITOR: please update YYYY with this RFC ID
           <tbody>
             <tr>
               <td>197000</td>
-              <td><eref target="https://www-static.ripe.net/dynamic/draft-ietf-grow-yang-bgp-communities/as197000.json">as197000.json</eref></td>
+              <td><eref target="https://web.admindns.ripe.net/draft-ietf-grow-yang-bgp-communities/as197000.json">as197000.json</eref></td>
               <td>2025-07-04</td>
             </tr>
             <tr>
               <td>25152</td>
-              <td><eref target="https://www-static.ripe.net/dynamic/draft-ietf-grow-yang-bgp-communities/as25152.json">as25152.json</eref></td>
+              <td><eref target="https://web.admindns.ripe.net/draft-ietf-grow-yang-bgp-communities/as25152.json">as25152.json</eref></td>
               <td>2025-07-04</td>
             </tr>
           </tbody>
