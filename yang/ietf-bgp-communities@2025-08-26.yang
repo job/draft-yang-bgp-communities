@@ -475,26 +475,19 @@ module ietf-bgp-communities {
       uses maintainer-contact;
     }
     list regular {
+      must
+        "(./global-admin = ../autonomous-system-id) or
+         (./global-admin >= 64512 and ./global-admin <= 65534)" {
+          error-message
+            "global-admin must be private ASN or match autonomous-system-id";
+      }
       key "name";
       ordered-by user;
       description
         "A list of objects describing RFC 1997 BGP Communities";
       uses regular-community;
-      must
-        "(./global-admin = ../autonomous-system-id) or
-         (./global-admin >= 64512 and ./global-admin <= 65534)" {
-        error-message
-          "global-admin must be private ASN or match autonomous-system-id";
-        }
     }
     list extended {
-      key "name";
-      ordered-by user;
-      description
-        "A list of objects describing RFC 4360 Extended BGP
-         Communities.  Two-Octet and Four-Octet AS Specific
-         communities are supported by this model.";
-      uses extended-community;
       must
         "(./asn = ../autonomous-system-id) or
          (./asn4 = ../autonomous-system-id) or
@@ -502,22 +495,29 @@ module ietf-bgp-communities {
          (./asn4 >= 4200000000 and ./asn4 <= 4294967294)" {
         error-message
           "global-admin must be private ASN or match autonomous-system-id";
-        }
-    }
-    list large {
+      }
       key "name";
       ordered-by user;
       description
-        "A list of objects describing RFC 8092 Large BGP
-         Communities";
-      uses large-community;
+        "A list of objects describing RFC 4360 Extended BGP
+         Communities.  Two-Octet and Four-Octet AS Specific
+         communities are supported by this model.";
+      uses extended-community;
+    }
+    list large {
       must
         "(./global-admin = ../autonomous-system-id) or
          (./global-admin >= 64512 and ./global-admin <= 65534) or
          (./global-admin >= 4200000000 and ./global-admin <= 4294967294)" {
         error-message
           "global-admin must be private ASN or match autonomous-system-id";
-        }
+      }
+      key "name";
+      ordered-by user;
+      description
+        "A list of objects describing RFC 8092 Large BGP
+         Communities";
+      uses large-community;
     }
   }
 }
