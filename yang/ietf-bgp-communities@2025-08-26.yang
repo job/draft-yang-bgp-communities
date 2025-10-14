@@ -479,7 +479,8 @@ module ietf-bgp-communities {
         "(./global-admin = ../autonomous-system-id) or
          (./global-admin >= 64512 and ./global-admin <= 65534)" {
           error-message
-            "global-admin must be private ASN or match autonomous-system-id";
+            "global-admin must be private ASN or match
+             autonomous-system-id";
       }
       key "name";
       ordered-by user;
@@ -494,7 +495,8 @@ module ietf-bgp-communities {
          (./asn >= 64512 and ./asn <= 65534) or
          (./asn4 >= 4200000000 and ./asn4 <= 4294967294)" {
         error-message
-          "global-admin must be private ASN or match autonomous-system-id";
+          "global-admin must be private ASN or match
+           autonomous-system-id";
       }
       key "name";
       ordered-by user;
@@ -508,9 +510,11 @@ module ietf-bgp-communities {
       must
         "(./global-admin = ../autonomous-system-id) or
          (./global-admin >= 64512 and ./global-admin <= 65534) or
-         (./global-admin >= 4200000000 and ./global-admin <= 4294967294)" {
+         (./global-admin >= 4200000000 and
+          ./global-admin <= 4294967294)" {
         error-message
-          "global-admin must be private ASN or match autonomous-system-id";
+          "global-admin must be private ASN or match
+           autonomous-system-id";
       }
       key "name";
       ordered-by user;
