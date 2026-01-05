@@ -30,18 +30,17 @@ xml2rfc --v3 --text --html draft/draft-yang-bgp-communities.xml
 
 Display the YANG module tree:
 ```
-wget https://www.yangcatalog.org/all_modules/ietf-inet-types@2024-10-21.yang -O yang/ietf-inet-types@2024-10-21.yang
-yanglint -p yang -f tree yang/ietf-bgp-communities.yang
-```
-
-Validate the YANG module:
-```
-pyang --verbose --ietf -p yang yang/ietf-bgp-communities.yang
+git clone https://github.com/YangModels/yang.git YangModels
+ln -s YangModels/experimental/ietf-extracted-YANG-modules ietf-yang
+pyang --verbose --ietf -p ietf-yang:yang -f tree  yang/ietf-bgp-communities.yang
+pyang --verbose --ietf -p ietf-yang:yang -f tree  yang/ietf-bgp-communities-annotate.yang
+pyang --verbose --ietf -p ietf-yang:yang -f tree --tree-print-groupings ietf-yang/ietf-bgp@2024-10-21.yang yang/ietf-bgp-communities-annotate.yang
 ```
 
 Validate the JSON specification using the YANG model:
 ```
-yanglint -p yang yang/ietf-bgp-communities.yang examples/bgp-communities.json
+yanglint -p ietf-yang yang/ietf-bgp-communities.yang examples/bgp-communities.json
+yanglint -p ietf-yang yang/ietf-bgp-communities-annotate.yang examples/ietf-bgp.json
 ```
 
 Generate a SID file from the YANG model (using Experimental/Private SIDs):
@@ -58,6 +57,9 @@ scripts/parser.py examples/rfc4384.txt examples/rfc4384.json
 
 Convert the example JSON specification to a CBOR file:
 ```
+python3 -m venv scripts
+scripts/bin/pip install cbor2
+PATH=scripts/bin:$PATH
 scripts/convertcbor.py --j2c -j examples/bgp-communities.json -c examples/bgp-communities.cbor
 scripts/convertcbor.py --j2c -j examples/bgp-communities.json -s *.sid -c examples/bgp-communities-sids.cbor
 ```
@@ -65,6 +67,18 @@ scripts/convertcbor.py --j2c -j examples/bgp-communities.json -s *.sid -c exampl
 Convert a CBOR file to JSON:
 ```
 scripts/convertcbor.py --c2j -c <in.cbor> [-s *.sid] -j <out.json>
+```
+
+Sign a JSON file:
+```
+scripts/bin/pip install jwcrypto rfc8785
+openssl ecparam -genkey -name secp521r1 -noout -out jws.key
+openssl ec -in jws.key -pubout -out jws.pub
+scripts/jwstool.py -s -k jws.key examples/bgp-communities.json
+
+Validate the signed JSON:
+````
+scripts/jwstool.py -v -k jws.pub examples/bgp-communities.json
 ```
 
 ## Implementations

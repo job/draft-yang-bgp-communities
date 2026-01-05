@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="US-ASCII"?>
 
 <!DOCTYPE rfc [
+<!ENTITY I-D.ietf-idr-bgp-model PUBLIC "" "https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-idr-bgp-model-18.xml">
 <!ENTITY I-D.ietf-netmod-rfc6991-bis PUBLIC "" "https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-netmod-rfc6991-bis-18.xml">
 <!ENTITY I-D.ietf-netmod-rfc8407bis PUBLIC "" "https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-netmod-rfc8407bis-28.xml">
 <!ENTITY IEEE.1003-2.1992 PUBLIC "" "https://bib.ietf.org/public/rfc/bibxml6/reference.R.IEEE.1003-2.1992.xml">
@@ -23,6 +24,7 @@
 <!ENTITY RFC8195 PUBLIC "" "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8195.xml">
 <!ENTITY RFC8340 PUBLIC "" "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8340.xml">
 <!ENTITY RFC8341 PUBLIC "" "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8341.xml">
+<!ENTITY RFC8349 PUBLIC "" "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8349.xml">
 <!ENTITY RFC8446 PUBLIC "" "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml">
 <!ENTITY RFC8792 PUBLIC "" "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8792.xml">
 <!ENTITY RFC9000 PUBLIC "" "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9000.xml">
@@ -68,6 +70,10 @@
         This document defines a YANG data model for the structured specification of BGP communities.
         The model provides operators with a way to publish their locally defined BGP communities in a standardized format.
       </t>
+      <t>
+        Two YANG modules are defined in this document.
+        The first is designed for stand-alone usage. The second is used to augment the "ietf-bgp" YANG module<xref target="I-D.ietf-idr-bgp-model"/> with BGP community annotations.
+      </t>
     </abstract>
   </front>
 
@@ -81,6 +87,10 @@
         This document provides a YANG<xref target="RFC7950"/> module for describing the structure and meaning of BGP communities<xref target="RFC1997"/>, Extended BGP communities<xref target="RFC4360"/> and Large BGP communities<xref target="RFC8092"/>.
         ISPs can use this standardized format to publish their community definitions.
         <xref target="rationale"/> elaborates on further advantages of using such a standardized format.
+      </t>
+      <t>
+        <xref target="tree"/> and <xref target="module"/> describe the base module.
+        <xref target="augment"/> describes a module which augments the "ietf-bgp" YANG module<xref target="I-D.ietf-idr-bgp-model"/> with BGP community annotations.
       </t>
 
     </section>
@@ -136,10 +146,11 @@
       <sourcecode>
 module: ietf-bgp-communities
   +--ro bgp-communities
-     +--ro serial?        uint32
-     +--ro uri?           inet:uri
-     +--ro description?   string
-     +--ro contact-url?   inet:uri
+     +--ro serial?                 uint32
+     +--ro autonomous-system-id?   inet:as-number
+     +--ro uri?                    inet:uri
+     +--ro description?            string
+     +--ro contact-url?            inet:uri
      +--ro contact* [email-address]
      |  +--ro email-address          inet:email-address
      |  +--ro name?                  string
@@ -159,16 +170,16 @@ module: ietf-bgp-communities
      |        +--ro pattern        field-pattern
      |        +--ro description?   field-description
      +--ro extended* [name]
-     |  +--ro name              community-name
-     |  +--ro category?         community-category
-     |  +--ro description?      community-description
-     |  +--ro type              uint8
-     |  +--ro subtype           uint8
+     |  +--ro name           community-name
+     |  +--ro category?      community-category
+     |  +--ro description?   community-description
+     |  +--ro type           uint8
+     |  +--ro subtype        uint8
      |  +--ro (global-admin)
      |  |  +--:(asn)
-     |  |  |  +--ro asn?   two-octet-as-number
+     |  |  |  +--ro asn?     two-octet-as-number
      |  |  +--:(asn4)
-     |  |     +--ro asn4?   inet:as-number
+     |  |     +--ro asn4?    inet:as-number
      |  +--ro local-admin
      |     +--ro format?   local-admin-format
      |     +--ro field* [name]
@@ -198,9 +209,9 @@ module: ietf-bgp-communities
       </sourcecode>
     </section>
 
-    <section title="YANG Module" anchor="module">
+    <section title="Base Module" anchor="module">
       <t>
-        This section contains the complete YANG module defined in this document.
+        This section contains the base YANG module for BGP community definitions.
       </t>
       <t>
         Several elements in this module use data types from <xref target="I-D.ietf-netmod-rfc6991-bis"/>.
@@ -208,7 +219,7 @@ module: ietf-bgp-communities
       </t>
       <sourcecode>
 <![CDATA[
-<CODE BEGINS> file "ietf-bgp-communities@2025-07-04.yang"
+<CODE BEGINS> file "ietf-bgp-communities@2025-08-26.yang"
 
 module ietf-bgp-communities {
   yang-version 1.1;
@@ -254,7 +265,7 @@ module ietf-bgp-communities {
 
   // RFC-EDITOR: please update YYYY with this RFC ID
 
-  revision 2025-07-04 {
+  revision 2025-08-26 {
     description
       "Initial revision.";
     reference
@@ -432,13 +443,222 @@ module ietf-bgp-communities {
     }
   }
 
+  grouping maintainer-contact {
+    description
+      "A maintainer contact entry";
+    leaf email-address {
+      type inet:email-address;
+      description
+        "Maintainer contact e-mail address";
+    }
+    leaf name {
+      type string {
+        length "1..255";
+      }
+      description
+        "Maintainer contact name";
+    }
+    leaf role {
+      type string {
+        length "1..255";
+      }
+      description
+        "Maintainer contact role";
+    }
+    leaf organization {
+      type string {
+        length "1..255";
+      }
+      description
+        "Maintainer contact organization";
+    }
+    leaf organizational-unit {
+      type string {
+        length "1..255";
+      }
+      description
+        "Maintainer contact organizational unit";
+    }
+  }
+
+  grouping regular-community {
+    description
+      "A Regular BGP community definition";
+    leaf name {
+      type community-name;
+      description
+        "Community name";
+    }
+    leaf category {
+      type community-category;
+      description
+        "Category of the community";
+    }
+    leaf description {
+      type community-description;
+      description
+        "Description for the community";
+    }
+    leaf global-admin {
+      type two-octet-as-number;
+      mandatory true;
+      description
+        "Global Administrator field";
+    }
+    container local-admin {
+      description
+        "Local Administrator Field";
+      leaf format {
+        type local-admin-format;
+        default "decimal";
+        description
+          "Format used for parsing Local Administrator subfields";
+      }
+      uses local-admin-fields;
+    }
+    reference
+      "RFC 1997: BGP Communities Attribute";
+  }
+
+  grouping extended-community {
+    description
+      "An Extended BGP community definition";
+    leaf name {
+      type community-name;
+      description
+        "Community name";
+    }
+    leaf category {
+      type community-category;
+      description
+        "Category of the community";
+    }
+    leaf description {
+      type community-description;
+      description
+        "Description for the community";
+    }
+    leaf type {
+      type uint8 {
+        range "0|2|64|66";
+      }
+      mandatory true;
+      description
+        "High-order Type of the community.  Supported values are 0
+         (0x00) for Transitive Two-Octet AS-Specific Extended
+         Communities, 2 (0x02) for Transitive Four-Octet
+         AS-Specific Extended Communities, 64 (0x40) for
+         Non-Transitive Two-Octet AS-Specific Extended Communities
+         and 66 (0x42) for Non-Transitive Four-Octet AS-Specific
+         Extended Communities.";
+    }
+    leaf subtype {
+      type uint8;
+      mandatory true;
+      description
+        "Low-order Sub-Type of the community";
+    }
+    choice global-admin {
+      mandatory true;
+      description
+        "Global Administrator Field";
+      case asn {
+        leaf asn {
+          type two-octet-as-number;
+          must "../type = 0 or ../type = 64" {
+            error-message
+              "../type must match Two-Octet AS-Specific Community";
+          }
+          description
+            "Two-Octet AS";
+        }
+      }
+      case asn4 {
+        leaf asn4 {
+          type inet:as-number;
+          must "../type = 2 or ../type = 66" {
+            error-message
+              "../type must match Four-Octet AS-Specific Community";
+          }
+          description
+            "Four-Octet AS";
+        }
+      }
+    }
+    container local-admin {
+      description
+        "Local Administrator Field";
+      leaf format {
+        type local-admin-format;
+        default "decimal";
+        description
+          "Format used for parsing Local Administrator subfields";
+      }
+      uses local-admin-fields;
+    }
+    reference
+      "RFC 4360: BGP Extended Communities Attribute";
+  }
+
+  grouping large-community {
+    description
+      "A Large BGP community definition";
+    leaf name {
+      type community-name;
+      description
+        "Community name";
+    }
+    leaf category {
+      type community-category;
+      description
+        "Category of the community";
+    }
+    leaf description {
+      type community-description;
+      description
+        "Description for the community";
+    }
+    leaf global-admin {
+      type inet:as-number;
+      mandatory true;
+      description
+        "Global Administrator field";
+    }
+    container local-data-part-1 {
+      description
+        "Local Data Part 1 Field";
+      leaf format {
+        type local-admin-format;
+        default "decimal";
+        description
+          "Format used for parsing Local Data Part 1 subfields";
+      }
+      uses local-admin-fields;
+    }
+    container local-data-part-2 {
+      description
+        "Local Data Part 2 Field";
+      leaf format {
+        type local-admin-format;
+        default "decimal";
+        description
+          "Format used for parsing Local Data Part 2 subfields";
+      }
+      uses local-admin-fields;
+    }
+    reference
+      "RFC 8092: BGP Large Communities Attribute";
+  }
+
   container bgp-communities {
     config false;
     description
       "A community set";
     leaf serial {
       type uint32;
-      must "boolean(.)";
+      must ". > 0" {
+        error-message "serial must not be 0";
+      }
       description
         "Version number of the community set.  This value wraps and
          should be compared using sequence space arithmetic.
@@ -447,6 +667,11 @@ module ietf-bgp-communities {
          YYYYMMDDnn syntax as commonly used inside the DNS.";
       reference
         "RFC 1912: Common DNS Operational and Configuration Errors";
+    }
+    leaf autonomous-system-id {
+      type inet:as-number;
+      description
+        "Autonomous System authoritative for the community set";
     }
     leaf uri {
       type inet:uri;
@@ -470,208 +695,182 @@ module ietf-bgp-communities {
       key "email-address";
       description
         "A list of contacts for the community set maintainer(s)";
-      leaf email-address {
-        type inet:email-address;
-        description
-          "Maintainer contact e-mail address";
-      }
-      leaf name {
-        type string {
-          length "1..255";
-        }
-        description
-          "Maintainer contact name";
-      }
-      leaf role {
-        type string {
-          length "1..255";
-        }
-        description
-          "Maintainer contact role";
-      }
-      leaf organization {
-        type string {
-          length "1..255";
-        }
-        description
-          "Maintainer contact organization";
-      }
-      leaf organizational-unit {
-        type string {
-          length "1..255";
-        }
-        description
-          "Maintainer contact organizational unit";
-      }
+      uses maintainer-contact;
     }
     list regular {
+      must
+        "(./global-admin = ../autonomous-system-id) or
+         (./global-admin >= 64512 and ./global-admin <= 65534)" {
+          error-message
+            "global-admin must be private ASN or match
+             autonomous-system-id";
+      }
       key "name";
       ordered-by user;
       description
         "A list of objects describing RFC 1997 BGP Communities";
-      leaf name {
-        type community-name;
-        description
-          "Community name";
-      }
-      leaf category {
-        type community-category;
-        description
-          "Category of the community";
-      }
-      leaf description {
-        type community-description;
-        description
-          "Description for the community";
-      }
-      leaf global-admin {
-        type two-octet-as-number;
-        mandatory true;
-        description
-          "Global Administrator field";
-      }
-      container local-admin {
-        description
-          "Local Administrator Field";
-        leaf format {
-          type local-admin-format;
-          default "decimal";
-          description
-            "Format used for parsing Local Administrator subfields";
-        }
-        uses local-admin-fields;
-      }
-      reference
-        "RFC 1997: BGP Communities Attribute";
+      uses regular-community;
     }
     list extended {
+      must
+        "(./asn = ../autonomous-system-id) or
+         (./asn4 = ../autonomous-system-id) or
+         (./asn >= 64512 and ./asn <= 65534) or
+         (./asn4 >= 4200000000 and ./asn4 <= 4294967294)" {
+        error-message
+          "global-admin must be private ASN or match
+           autonomous-system-id";
+      }
       key "name";
       ordered-by user;
       description
         "A list of objects describing RFC 4360 Extended BGP
          Communities.  Two-Octet and Four-Octet AS Specific
          communities are supported by this model.";
-      leaf name {
-        type community-name;
-        description
-          "Community name";
-      }
-      leaf category {
-        type community-category;
-        description
-          "Category of the community";
-      }
-      leaf description {
-        type community-description;
-        description
-          "Description for the community";
-      }
-      leaf type {
-        type uint8 {
-          range "0|2|64|66";
-        }
-        mandatory true;
-        description
-          "High-order Type of the community.  Supported values are 0
-           (0x00) for Transitive Two-Octet AS-Specific Extended
-           Communities, 2 (0x02) for Transitive Four-Octet
-           AS-Specific Extended Communities, 64 (0x40) for
-           Non-Transitive Two-Octet AS-Specific Extended Communities
-           and 66 (0x42) for Non-Transitive Four-Octet AS-Specific
-           Extended Communities.";
-      }
-      leaf subtype {
-        type uint8;
-        mandatory true;
-        description
-          "Low-order Sub-Type of the community";
-      }
-      choice global-admin {
-        mandatory true;
-        description
-          "Global Administrator Field";
-        case asn {
-          leaf asn {
-            type two-octet-as-number;
-            must "../type = 0 or ../type = 64";
-            description
-              "Two-Octet AS";
-          }
-        }
-        case asn4 {
-          leaf asn4 {
-            type inet:as-number;
-            must "../type = 2 or ../type = 66";
-            description
-              "Four-Octet AS";
-          }
-        }
-      }
-      container local-admin {
-        description
-          "Local Administrator Field";
-        leaf format {
-          type local-admin-format;
-          default "decimal";
-          description
-            "Format used for parsing Local Administrator subfields";
-        }
-        uses local-admin-fields;
-      }
-      reference
-        "RFC 4360: BGP Extended Communities Attribute";
+      uses extended-community;
     }
     list large {
+      must
+        "(./global-admin = ../autonomous-system-id) or
+         (./global-admin >= 64512 and ./global-admin <= 65534) or
+         (./global-admin >= 4200000000 and
+          ./global-admin <= 4294967294)" {
+        error-message
+          "global-admin must be private ASN or match
+           autonomous-system-id";
+      }
       key "name";
       ordered-by user;
       description
         "A list of objects describing RFC 8092 Large BGP
          Communities";
-      leaf name {
-        type community-name;
-        description
-          "Community name";
-      }
-      leaf category {
-        type community-category;
-        description
-          "Category of the community";
-      }
-      leaf description {
-        type community-description;
-        description
-          "Description for the community";
-      }
-      leaf global-admin {
-        type inet:as-number;
-        mandatory true;
-        description
-          "Global Administrator field";
-      }
-      container local-data-part-1 {
-        description
-          "Local Data Part 1 Field";
-        leaf format {
-          type local-admin-format;
-          default "decimal";
-          description
-            "Format used for parsing Local Data Part 1 subfields";
-        }
-        uses local-admin-fields;
-      }
-      container local-data-part-2 {
-        description
-          "Local Data Part 2 Field";
-        leaf format {
-          type local-admin-format;
-          default "decimal";
-          description
-            "Format used for parsing Local Data Part 2 subfields";
-        }
-        uses local-admin-fields;
-      }
-      reference
-        "RFC 8092: BGP Large Communities Attribute";
+      uses large-community;
+    }
+  }
+}
+<CODE ENDS>
+]]>
+      </sourcecode>
+
+    </section>
+
+    <section title="Augmentation Module" anchor="augment">
+      <t>
+        This section contains a YANG module defining augmentations for the "ietf-bgp" YANG module.
+        It can be used to annotate BGP communities in a BGP RIB.
+      </t>
+      <sourcecode>
+<![CDATA[
+<CODE BEGINS> file "ietf-bgp-communities-annotate@2025-08-26.yang"
+
+module ietf-bgp-communities-annotate {
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:ietf-bgp-communities-annotate";
+  prefix bgp-comm-an;
+
+  import ietf-bgp-communities {
+    prefix bgp-comm;
+    reference
+      "draft-ietf-grow-yang-bgp-communities-06: A YANG Data
+       Model for BGP Communities";
+  }
+  import ietf-routing {
+    prefix rt;
+    reference
+      "RFC 8349: A YANG Data Model for Routing Management
+       (NMDA Version).";
+  }
+  import ietf-bgp {
+    prefix bgp;
+    reference
+      "draft-ietf-idr-bgp-model-18: YANG Model for Border
+       Gateway Protocol (BGP-4)";
+  }
+
+  organization
+    "IETF GROW Working Group";
+  contact
+    "WG Web:   <https://datatracker.ietf.org/wg/grow/>
+     WG List:  <mailto:grow@ietf.org>
+
+     Author:   Martin Pels
+       <mailto:mpels@ripe.net>";
+  description
+    "This module augments the ietf-bgp module with support for
+     community annotations.
+
+     Copyright (c) 2025 IETF Trust and the persons identified as
+     authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject to
+     the license terms contained in, the Revised BSD License set
+     forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
+
+     This version of this YANG module is part of RFC YYYY; see
+     the RFC itself for full legal notices.
+
+     The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
+     NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
+     'MAY', and 'OPTIONAL' in this document are to be interpreted as
+     described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
+     they appear in all capitals, as shown here.";
+
+  // RFC-EDITOR: please update YYYY with this RFC ID
+
+  revision 2025-08-26 {
+    description
+      "Initial revision.";
+    reference
+      "RFC YYYY: A YANG Data Model for BGP Communities
+       RFC-EDITOR: please update YYYY with this RFC ID";
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+        + "rt:control-plane-protocol/bgp:bgp/bgp:rib/"
+        + "bgp:communities/bgp:community" {
+    description
+      "Augments a Regular BGP community from the
+       ietf-bgp module with an optional annotation.";
+    container annotation {
+      presence "true";
+      description
+        "The presence of this container indicates
+         that a community definition is available";
+      uses bgp-comm:regular-community;
+    }
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+        + "rt:control-plane-protocol/bgp:bgp/bgp:rib/"
+        + "bgp:ext-communities/bgp:ext-community" {
+    description
+      "Augments an Extended BGP community from the
+       ietf-bgp module with an optional annotation.";
+    container annotation {
+      presence "true";
+      description
+        "The presence of this container indicates
+         that a community definition is available";
+      uses bgp-comm:extended-community;
+    }
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+        + "rt:control-plane-protocol/bgp:bgp/bgp:rib/"
+        + "bgp:large-communities/bgp:large-community" {
+    description
+      "Augments a Large BGP community from the
+       ietf-bgp module with an optional annotation.";
+    container annotation {
+      presence "true";
+      description
+        "The presence of this container indicates
+         that a community definition is available";
+      uses bgp-comm:large-community;
     }
   }
 }
@@ -794,13 +993,13 @@ RFC-EDITOR: please update YYYY with this RFC ID
           <tbody>
             <tr>
               <td>197000</td>
-              <td><eref target="https://www-static.ripe.net/dynamic/draft-ietf-grow-yang-bgp-communities/as197000.json">as197000.json</eref></td>
-              <td>2025-07-04</td>
+              <td><eref target="https://web.admindns.ripe.net/draft-ietf-grow-yang-bgp-communities/as197000.json">as197000.json</eref></td>
+              <td>2025-08-26</td>
             </tr>
             <tr>
               <td>25152</td>
-              <td><eref target="https://www-static.ripe.net/dynamic/draft-ietf-grow-yang-bgp-communities/as25152.json">as25152.json</eref></td>
-              <td>2025-07-04</td>
+              <td><eref target="https://web.admindns.ripe.net/draft-ietf-grow-yang-bgp-communities/as25152.json">as25152.json</eref></td>
+              <td>2025-08-26</td>
             </tr>
           </tbody>
         </table>
@@ -893,6 +1092,7 @@ RFC-EDITOR: please update YYYY with this RFC ID
 
     <references title="Normative References" anchor="normative">
 
+      &I-D.ietf-idr-bgp-model;
       &I-D.ietf-netmod-rfc6991-bis;
       &RFC1930;
       &RFC1997;
@@ -900,6 +1100,7 @@ RFC-EDITOR: please update YYYY with this RFC ID
       &RFC7950;
       &RFC8092;
       &RFC8341;
+      &RFC8349;
       &RFC9595;
 
     </references>
@@ -943,6 +1144,7 @@ RFC-EDITOR: please update YYYY with this RFC ID
 
 {
   "ietf-bgp-communities:bgp-communities": {
+    "autonomous-system-id": 64497,
     "serial": 2023080101,
     "uri": "http://example.net/peering/communities",
     "description": "BGP Community example for ASN-Based Selective \
@@ -996,6 +1198,7 @@ NO_EXPORT",
 
 {
   "ietf-bgp-communities:bgp-communities": {
+    "autonomous-system-id": 10876,
     "serial": 2023080101,
     "uri": "http://example.net/peering/communities",
     "description": "BGP Community example for Data Collection",
