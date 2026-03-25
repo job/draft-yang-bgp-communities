@@ -45,7 +45,8 @@
      ipr="trust200902"
      xml:lang="en"
      submissionType="IETF"
-     version="3">
+     version="3"
+     consensus="yes">
 
   <front>
 
